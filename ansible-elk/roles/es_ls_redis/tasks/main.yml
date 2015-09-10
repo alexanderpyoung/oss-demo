@@ -1,0 +1,56 @@
+- name: Install logstash
+  apt: name=logstash state=latest force=yes
+- name: Install es
+  apt: name=elasticsearch state=latest force=yes
+- name: Install redis
+  apt: name=redis-server state=latest
+- name: Install grafana
+  apt: name=grafana state=latest force=yes
+- name: Add ES to default runtime
+  service: name=elasticsearch enabled=yes state=started
+- name: Bind redis to public IP
+  replace: dest=/etc/redis/redis.conf regexp='bind 127.0.0.1' replace='bind 127.0.0.1 {{ hostvars[groups['es_host'][0]]['ansible_eth0']['ipv4']['address']  }}'
+- name: Fetch Kibana
+  get_url: url=https://download.elastic.co/kibana/kibana/kibana-4.1.2-linux-x64.tar.gz dest=/opt/kibana.tar.gz
+- name: Extract kibana
+  unarchive: src=/opt/kibana.tar.gz copy=no dest=/opt creates=/opt/kibana
+- name: Copy service definition
+  template: src=kibana4 dest=/etc/init.d/kibana4
+- name: Make kibana4 executable
+  command: chmod 0777 /etc/init.d/kibana4
+- name: Start kibana services
+  service: name=kibana4 state=started
+- name: Install graphite-carbon
+  apt: name=graphite-carbon state=latest
+- name: Install graphite-web
+  apt: name=graphite-web state=latest
+- name: Create db schema
+  command: sudo graphite-manage syncdb --noinput
+- name: change permissions on db
+  command: sudo chmod 0777 /var/lib/graphite/graphite.db
+- name: Install apache
+  apt: name=apache2 state=latest
+- name: Install wsgi
+  apt: name=libapache2-mod-wsgi state=latest
+- name: a2dissite default
+  command: sudo a2dissite 000-default
+- name: copy file
+  template: src=apache2-graphite.conf dest=/etc/apache2/sites-available
+- name: Enable graphite web
+  command: sudo a2ensite apache2-graphite
+- name: Restart apache
+  service: name=apache2 state=restarted
+- name: Enable graphite on boot
+  template: src=graphite-carbon dest=/etc/default/graphite-carbon
+- name: schemas for carbon
+  template: src=storage-schemas.conf dest=/etc/carbon/storage-schemas.conf
+- name: Start carbon-cache
+  service: name=carbon-cache state=started
+- name: Restart redis
+  service: name=redis-server state=restarted
+- name: Add logstash config
+  template: src=10-input.conf dest=/etc/logstash/conf.d/10-input.conf
+- name: Start logstash
+  service: name=logstash enabled=yes state=started
+- name: Start grafana
+  service: name=grafana-server enabled=yes state=started

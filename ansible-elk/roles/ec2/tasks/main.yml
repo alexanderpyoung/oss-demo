@@ -1,0 +1,23 @@
+- include_vars: credentials.yml
+- name: Provision EC2 instance
+  ec2:
+    image: ami-47a23a30
+    instance_type: t2.micro
+    region: eu-west-1
+    key_name: AY-ELK
+    wait: True
+    count: 2
+    volumes:
+      - device_name: /dev/sda1
+        delete_on_termination: True
+        volume_size: 9
+  register: ec2
+- name: Add instance to host group
+  add_host: hostname={{ ec2.instances[0].public_ip  }} groupname=first
+- name: Wait for SSH to be available
+  wait_for: host={{ ec2.instances[0].public_ip }} port=22 delay=60 timeout=320 state=started
+- name: Add instance to host group
+  add_host: hostname={{ ec2.instances[1].public_ip  }} groupname=es_host
+- name: Wait for SSH to be available
+  wait_for: host={{ ec2.instances[1].public_ip }} port=22 delay=60 timeout=320 state=started
+

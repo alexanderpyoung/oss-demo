@@ -1,0 +1,26 @@
+- name: Create EC2 instance
+  hosts: localhost
+  connection: local
+  gather_facts: False
+  roles: 
+    - ec2
+
+- name: Configure ES Host
+  hosts: es_host
+  gather_facts: True
+  user: ubuntu
+  sudo: True
+  roles:
+    - common
+    - es_ls_redis
+
+- name: Configure first instance
+  hosts: first
+  gather_facts: True
+  user: ubuntu
+  sudo: True
+  roles:
+    - common
+    - app_and_logstash
+ 
+

@@ -1,0 +1,6 @@
+- name: Add ES repos to /etc/apt/sources.list.d
+  template: src=elasticsearch.list dest=/etc/apt/sources.list.d/elasticsearch.list
+- name: Update package list and distro
+  apt: upgrade=dist update_cache=yes
+- name: Install JDK
+  apt: name=default-jdk state=latest
