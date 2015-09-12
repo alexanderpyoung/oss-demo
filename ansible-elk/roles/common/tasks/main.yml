@@ -4,3 +4,5 @@
   apt: upgrade=dist update_cache=yes
 - name: Install JDK
   apt: name=default-jdk state=latest
+- name: Install python-passlib
+  apt: name=python-passlib state=present

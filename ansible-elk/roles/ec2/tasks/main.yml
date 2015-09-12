@@ -15,9 +15,9 @@
 - name: Add instance to host group
   add_host: hostname={{ ec2.instances[0].public_ip  }} groupname=first
 - name: Wait for SSH to be available
-  wait_for: host={{ ec2.instances[0].public_ip }} port=22 delay=60 timeout=320 state=started
+  wait_for: host={{ ec2.instances[0].public_ip }} port=22 delay=15 timeout=320 state=started
 - name: Add instance to host group
   add_host: hostname={{ ec2.instances[1].public_ip  }} groupname=es_host
 - name: Wait for SSH to be available
-  wait_for: host={{ ec2.instances[1].public_ip }} port=22 delay=60 timeout=320 state=started
+  wait_for: host={{ ec2.instances[1].public_ip }} port=22 delay=15 timeout=320 state=started
 

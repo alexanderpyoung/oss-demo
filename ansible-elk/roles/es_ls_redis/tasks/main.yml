@@ -54,3 +54,11 @@
   service: name=logstash enabled=yes state=started
 - name: Start grafana
   service: name=grafana-server enabled=yes state=started
+- name: Install nagios
+  apt: name=nagios3 state=present
+- name: Set up htpasswd
+  htpasswd: path=/etc/nagios3/htpasswd.users name=nagiosadmin password=password1234 state=present
+- name: chmod htpasswd
+  command: chmod 0666 /etc/nagios3/htpasswd.users
+- name: Restart apache
+  service: name=apache2 state=restarted

@@ -1,3 +1,7 @@
+- name: Touch log
+  command: touch /home/ubuntu/app.log
+- name: Chmod log
+  command: chmod 0777 /home/ubuntu/app.log
 - name: Install nginx
   apt: name=nginx state=present
 - name: Install logstash
@@ -22,10 +26,28 @@
   acl: name=/var/log/nginx/access.log entity=logstash etype=user permissions="r" state=present
 - name: Set acl for error.log
   acl: name=/var/log/nginx/error.log entity=logstash etype=user permissions="r" state=present
+- name: copy application
+  template: src=app.py dest=/home/ubuntu/app.py
+- name: set acl  for app.py
+  acl: name=/home/ubuntu/app.py entity=ubuntu etype=user permissions="rwx" state=present
+- name: nginx conf
+  template: src=nginx.conf dest=/etc/nginx/sites-available/default
 - name: Restart nginx
   service: name=nginx state=restarted
 - name: Start logstash service
   service: name=logstash state=restarted enabled=yes
+- name: Install pip3
+  apt: name=python3-pip state=present
+- name: Install flask
+  command: pip3 install flask
+- name: Install uwsgi-python3
+  apt: name=uwsgi-plugin-python3 state=present
+- name: Install supervisord
+  apt: name=supervisor state=present
+- name: Copy supervisor config
+  template: src=uwsgi.conf dest=/etc/supervisor/conf.d/uwsgi.conf
+- name: Restart supervisor
+  service: name=supervisor state=restarted
 - name: Install collectd
   apt: name=collectd state=present
 - name: Collectd config
