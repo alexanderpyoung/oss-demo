@@ -1,0 +1,4 @@
+- name: copy nagios conf
+  template: src=monitor_farm.cfg dest=/etc/nagios3/conf.d/monitor_farm.cfg
+- name: restart nagios
+  service: name=nagios3 state=restarted

@@ -1,0 +1,13 @@
+- name: Update package lists and install nagios-nrpe-server
+  apt: name=nagios-nrpe-server state=present update_cache=yes
+- name: Install nagios-plugins
+  apt: name=nagios-plugins state=present
+- name: Copy NRPE_local.cfg
+  template: src=nrpe_local.cfg dest=/etc/nagios/nrpe_local.cfg
+- name: Restart NRPE server
+  service: name=nagios-nrpe-server state=restarted
+- name: Install nginx
+  apt: name=nginx state=present
+# we're installing mysql without a root password. For a throwaway demo, this is fine.
+- name: Install mysql
+  apt: name=mysql-server state=present

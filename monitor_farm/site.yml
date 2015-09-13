@@ -1,0 +1,30 @@
+- name: Create EC2 instance
+  hosts: localhost
+  connection: local
+  gather_facts: False
+  roles: 
+    - ec2
+
+- name: Get facts for monitor
+  hosts: monitor
+  gather_facts: True
+  user: ubuntu
+  sudo: True
+
+- name: Configure monitored servers
+  hosts: monitor_farm
+  gather_facts: True
+  user: ubuntu
+  sudo: True
+  roles:
+    - monitored
+
+- name: Configure monitoring
+  hosts: monitor
+  gather_facts: True
+  user: ubuntu
+  sudo: True
+  roles:
+    - monitor
+ 
+
