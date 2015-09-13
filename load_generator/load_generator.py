@@ -9,11 +9,11 @@ def fetch(address):
 if __name__ == "__main__":
   while True:
     threads = []
-    for i in range(50):
-      thread = threading.Thread(target=fetch, args=("http://52.19.52.137/502",))
+    for i in range(100):
+      thread = threading.Thread(target=fetch, args=("http://52.18.251.148",))
       threads.append(thread)
     for item in threads:
       item.start()
       print(threading.active_count())
-      if threading.active_count() >= 50:
+      if threading.active_count() >= 100:
         item.join()

@@ -1,3 +1,11 @@
+- name: Install nrpe server
+  apt: name=nagios-nrpe-server state=present
+- name: Install nagios-plugins
+  apt: name=nagios-plugins state=present
+- name: Copy nrpe config
+  template: src=nrpe_local.cfg dest=/etc/nagios/nrpe_local.cfg
+- name: Restart nrpe server
+  service: name=nagios-nrpe-server state=restarted
 - name: Touch log
   command: touch /home/ubuntu/app.log
 - name: Chmod log

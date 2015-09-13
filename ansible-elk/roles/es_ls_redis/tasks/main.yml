@@ -56,6 +56,12 @@
   service: name=grafana-server enabled=yes state=started
 - name: Install nagios
   apt: name=nagios3 state=present
+- name: Install nagios-nrpe-plugin
+  apt: name=nagios-nrpe-plugin state=present
+- name: Copy nagios localhost config
+  template: src=localhost_nagios2.cfg dest=/etc/nagios3/conf.d/localhost_nagios2.cfg
+- name: Restart nagios service
+  service: name=nagios3 state=restarted
 - name: Set up htpasswd
   htpasswd: path=/etc/nagios3/htpasswd.users name=nagiosadmin password=password1234 state=present
 - name: chmod htpasswd

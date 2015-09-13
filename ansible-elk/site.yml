@@ -23,4 +23,11 @@
     - common
     - app_and_logstash
  
+- name: Configure app monitoring
+  hosts: es_host
+  gather_facts: True
+  user: ubuntu
+  sudo: True
+  roles:
+    - monitor_app
 

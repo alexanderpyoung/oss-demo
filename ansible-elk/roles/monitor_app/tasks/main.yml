@@ -1,0 +1,4 @@
+- name: copy nagios conf
+  template: src=app_server.cfg dest=/etc/nagios3/conf.d/app_server.cfg
+- name: Restart nagios
+  service: name=nagios3 state=restarted
